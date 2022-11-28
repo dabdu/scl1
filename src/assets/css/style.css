@@ -1,0 +1,118 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+body {
+  font-family: "Roboto", sans-serif;
+  width: 100%;
+  overflow-x: hidden;
+  color: #777777;
+}
+
+.home-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content:flex-start;
+  align-items:flex-end;
+  color: white;
+  padding-top: 70px;
+  /* padding-right: 70px; */
+}
+.footer-container {
+  background: url("../images/footer-img.jpeg") no-repeat center;
+  background-size: cover;
+  position: relative;
+}
+
+/* .home-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+} */
+.primary-font {
+  font-weight: 300;
+  font-size: 14;
+  color: 
+  #2B2626;
+}
+.primary-header {
+  font-weight: 800;
+  font-size: 18;
+  color: #31512a;
+}
+.primary-btn {
+  background-color: #31512a;
+  color: white;
+}
+.primary-btn:hover {
+  color: #31512a;
+  background-color: white;
+  border: #31512a solid 1px;
+}
+.home {
+  width: 100%;
+  background: url("../images/home-img.png")
+    no-repeat center;
+  background-size: cover;
+  position: relative;
+  z-index: -100;
+}
+.about-sub-section {
+  background: url("https://firstmultiplemfbank.com/sclnew/wp-content/uploads/2022/10/Veg_6.png")
+    no-repeat center;
+  background-size: cover;
+  position: relative;
+}
+
+.home p,
+.about-sub-section p {
+  position: relative;
+  z-index: 2;
+}
+
+.home:after,
+.about-sub-section::after {
+  content: " ";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0; /* Fill the entire space */
+  /* background-color: rgba(0, 0, 0, 0.4); */
+}
+.about-sub-section::after {
+  content: " ";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0; /* Fill the entire space */
+  background-color: rgba(0, 0, 0, 0.3);
+}
+.loadingSpinnerContainer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: white;
+  z-index: 5000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.spinning-image {
+  height: 130px;
+  width: 130px;
+  animation: spin 1.2s linear infinite;
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
