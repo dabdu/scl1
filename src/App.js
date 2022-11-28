@@ -11,6 +11,7 @@ import {
   Contact,
   FieldAgent,
 } from "./pages";
+import Abt from "./pages/Abt";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Routes>
           <Route path="/" exact element={<Home />} />
           <Route path="/form" element={<About />} />
+          <Route path="/about" element={<Abt />} />
           <Route path="/products" element={<Products />} />
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/academy" element={<Academy />} />
