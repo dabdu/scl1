@@ -87,7 +87,7 @@ const Footer = () => {
         </div>
       </div>
 
-      <div className="flex md:flex-col flex-col-reverse max-w-[1240px] px-2 py-4 mx-auto justify-between sm:flex-row text-center text-white text-sm">
+      <div className="md:flex flex-col-reserve max-w-[1240px] px-2 py-4 mx-auto justify-between text-center text-white text-sm">
         <p className="py-4">Copyrights 2016 - 2022 SCL. All rights reserved</p>
         <div className="flex  space-x-4 md:justify-end justify-start md:mb-0 mb-5 sm:w-[300px] pt-4 text-2xl">
           <FaFacebook />
