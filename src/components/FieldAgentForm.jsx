@@ -5,7 +5,8 @@ import { toast } from "react-toastify";
 import InputField from "./Form/InputField";
 import SubHeader from "./Form/SubHeader";
 import Spinner from "./Spinner";
-
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 const FieldAgentForm = () => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -21,8 +22,9 @@ const FieldAgentForm = () => {
     address: "",
     state: "",
     town: "",
-    dob: "",
+    // dob: new Date()
   });
+  const [dob, setDob] = useState(null);
   const navigate = useNavigate();
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => {
@@ -43,22 +45,35 @@ const FieldAgentForm = () => {
     address,
     state,
     town,
-    dob,
   } = formData;
-
   const onChange = (e) => {
     setFormData((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
     }));
   };
+  const emailValidation = () => {
+    const regEx =
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (!regEx.test(email)) {
+      toast.error("Please Enter a Valid Email");
+    }
+  };
+  // Phone Number Validation
+  const phoneNumberValidation = () => {
+    if (phoneNumber.length !== 11) {
+      toast.error("Phone Number be 11 digits");
+    }
+  };
   const onSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    const regEx =
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const firstThree = phoneNumber.slice(0, 3);
     if (
       !firstName ||
       !lastName ||
-      !nPowerNumber ||
       !email ||
       !phoneNumber ||
       !yearsOfExprience ||
@@ -71,8 +86,28 @@ const FieldAgentForm = () => {
     ) {
       setLoading(false);
       toast.error("All Field Must be Fill");
-    } else {
+    } else if (!regEx.test(email)) {
+      setLoading(false);
       // Check Valid Email
+      toast.error("Please Enter a Valid Email");
+    } else if (phoneNumber.length !== 11) {
+      // Phone Number Validation
+      setLoading(false);
+
+      toast.error("Phone Number be 11 digits");
+    } else if (firstThree !== "080") {
+      setLoading(false);
+      toast.error(
+        "Phone Number Must Start with any of this Format (080-090-070-081-091)"
+      );
+    }
+    // else if (firstThree !== "080") {
+    //   setLoading(false);
+    //   toast.error(
+    //     "Phone Number Must Start with any of this Format (080-090-070-081-091)"
+    //   );
+    // }
+    else {
       axios({
         method: "post",
         url: "http://api.sclng.com/api/add-field-agent",
@@ -93,7 +128,7 @@ const FieldAgentForm = () => {
             address: "",
             state: "",
             town: "",
-            dob: "",
+            dob: new Date(),
           }));
           navigate(`/`);
           toast.success("Form Data Saved Successfully!!!");
@@ -108,7 +143,7 @@ const FieldAgentForm = () => {
   const flexClass = "flex justify-between pb-5";
   if (loading) return <Spinner />;
   return (
-    <div className="">
+    <div className=" mb-24">
       <div className="">
         <form className="flex items-center px-56 my-12">
           {/* Left Panel */}
@@ -142,14 +177,25 @@ const FieldAgentForm = () => {
                   onChange={onChange}
                   required={true}
                 />
-                <InputField
-                  title={"Date Of Birth"}
-                  nameId={"dob"}
-                  value={dob}
-                  onChange={onChange}
-                  required={true}
-                  type="date"
-                />
+                <div className="flex items-center font-semibold text-black ">
+                  {/* <p className="mr-2">DOB</p> */}
+                  {/* <InputField
+                    title={"Date Of Birth"}
+                    nameId={"dob"}
+                    value={dob}
+                    onChange={onChange}
+                    required={true}
+                    type="date"
+                  /> */}
+                  <DatePicker
+                    selected={dob}
+                    onChange={(date) => setDob(date)}
+                    dateFormat={"yyyy/MM/dd"}
+                    maxDate={new Date("2004/01/01")}
+                    placeholderText="DOB (Atlest 18 Years)"
+                    className="border border-black py-1 px-2 rounded-sm"
+                  />
+                </div>
               </div>
             </div>
             {/* Address */}
@@ -159,7 +205,7 @@ const FieldAgentForm = () => {
                 <div className={flexClass}>
                   {/* State Dropdown */}
                   <div
-                    className="form-group border border-black rounded-sm py-1 px-2"
+                    // className="form-group border border-black rounded-sm py-1 px-2"
                     style={{ width: "45%" }}
                   >
                     {/* <label className="control-label">State</label> */}
@@ -167,7 +213,7 @@ const FieldAgentForm = () => {
                       onChange={onChange}
                       name="state"
                       id="state"
-                      className="form-control"
+                      className="form-group border border-black rounded-sm py-1 px-4 w-full"
                     >
                       <option value="">- Select State -</option>
                       <option value="Abia">Abia</option>
@@ -227,7 +273,7 @@ const FieldAgentForm = () => {
                 />
               </div>
             </div>
-            {/* Personal Information */}
+            {/* Conact Information */}
             <div className="mb-5">
               <SubHeader title={"Contact Information"} />
               <div className={flexClass}>
@@ -239,24 +285,73 @@ const FieldAgentForm = () => {
                   required={true}
                   type="email"
                 />
-                <InputField
-                  title={"Phone Number"}
-                  nameId={"phoneNumber"}
-                  value={phoneNumber}
+                <div>
+                  {/* <p className="text-sm font-bold text-gray-700">
+                    Number Must be in this Format(080 ,070 , 081 ,071, 090 ,
+                    091)
+                  </p> */}
+                  <InputField
+                    title={"Phone Number"}
+                    nameId={"phoneNumber"}
+                    value={phoneNumber}
+                    onChange={onChange}
+                    required={true}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="">
+              {/* Years of Exprience */}
+              <div className="form-group my-8">
+                <label className="control-label text-black block my-3">
+                  Years of Exprience{" "}
+                </label>
+                <select
                   onChange={onChange}
-                  required={true}
-                />
+                  name="yearsOfExprience"
+                  id="yearsOfExprience"
+                  className="form-group border border-black rounded-sm py-1 px-2"
+                  style={{ width: "100%" }}
+                >
+                  <option value={""}>-- Years of Exprience --</option>
+                  <option value={"1-3"}>{"1-3 Years"}</option>
+                  <option value={"4-6"}>{"4-6 Years"}</option>
+                  <option value={"6+"}>{"6+"}</option>
+                </select>
+              </div>
+              {/* Climate Change */}
+              <div>
+                <p className="text-black my-2">
+                  What are your ideas about the impact of climate change on
+                  Africa?
+                </p>
+                <textarea
+                  placeholder="40 Character Max"
+                  rows={2}
+                  className="w-full border border-black rounded-sm p-2"
+                ></textarea>
+              </div>
+              <div>
+                <p className="text-black my-2">
+                  What are ideas on the use of agro allied chemicals on plant,
+                  animals and environement?
+                </p>
+                <textarea
+                  placeholder="40 Character Max"
+                  rows={2}
+                  className="w-full border border-black rounded-sm p-2"
+                ></textarea>
               </div>
             </div>
             <button
-              className="bg-black text-white px-14 py-2 font-medium rounded-md absolute right-0"
+              className="bg-black text-white px-14 py-2 font-medium rounded-md absolute right-0 mt-5"
               onClick={onSubmit}
             >
               Register
             </button>
           </div>
           {/* Right Panel */}
-          <div
+          {/* <div
             className="py-24 px-8"
             style={{
               width: "250px",
@@ -279,25 +374,7 @@ const FieldAgentForm = () => {
               onChange={onChange}
               required={true}
             />
-            {/* Years of Exprience */}
-            <div className="form-group my-8">
-              <label className="control-label text-black block my-3">
-                Years of Exprience{" "}
-              </label>
-              <select
-                onChange={onChange}
-                name="yearsOfExprience"
-                id="yearsOfExprience"
-                className="form-group border border-black rounded-sm py-1 px-2"
-                style={{ width: "100%" }}
-              >
-                <option value={""}>-- Years of Exprience --</option>
-                <option value={"1-3"}>{"1-3 Years"}</option>
-                <option value={"4-6"}>{"4-6 Years"}</option>
-                <option value={"6+"}>{"6+"}</option>
-              </select>
-            </div>
-          </div>
+          </div> */}
         </form>
       </div>
     </div>
