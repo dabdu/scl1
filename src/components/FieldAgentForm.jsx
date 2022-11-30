@@ -7,6 +7,8 @@ import SubHeader from "./Form/SubHeader";
 import Spinner from "./Spinner";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { lgaList } from "../constants/lgas";
+import { wardsList } from "../constants/wards";
 const FieldAgentForm = () => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -22,21 +24,33 @@ const FieldAgentForm = () => {
     address: "",
     state: "",
     town: "",
+    ward: "",
     // dob: new Date()
   });
   const [dob, setDob] = useState(null);
+  const [showLgaInput, setShowLgaInput] = useState(false);
+  const [filteredLga, setFilteredLga] = useState([]);
+  const [showWardsInput, setShowWardsInput] = useState(false);
+  const [filteredWards, setFilteredWards] = useState({});
+
   const navigate = useNavigate();
   useEffect(() => {
+    // navigator.geolocation.getCurrentPosition((position) => {
+    //   formData.lat = position.coords.latitude;
+    //   formData.lng = position.coords.longitude;
+    // });
     navigator.geolocation.getCurrentPosition((position) => {
-      formData.lat = position.coords.latitude;
-      formData.lng = position.coords.longitude;
+      setFormData((prevState) => ({
+        ...prevState,
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      }));
     });
   }, []);
   const {
     firstName,
     lastName,
     middleName,
-    nPowerNumber,
     email,
     phoneNumber,
     yearsOfExprience,
@@ -51,6 +65,29 @@ const FieldAgentForm = () => {
       ...prevState,
       [e.target.name]: e.target.value,
     }));
+  };
+  const onStateChange = (e) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
+    let filtered = wardsList.filter(
+      (item) => item.state === e.target.value.toUpperCase()
+    );
+    setFilteredLga(filtered);
+    setShowLgaInput(true);
+  };
+
+  const onLgaChange = (e) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
+    var selected = wardsList.find(function (item) {
+      return item.lga === e.target.value.toUpperCase();
+    });
+    setFilteredWards(selected);
+    setShowWardsInput(true);
   };
   const emailValidation = () => {
     const regEx =
@@ -77,8 +114,6 @@ const FieldAgentForm = () => {
       !email ||
       !phoneNumber ||
       !yearsOfExprience ||
-      // !lat ||
-      // !lng ||
       !address ||
       !state ||
       !town ||
@@ -95,12 +130,18 @@ const FieldAgentForm = () => {
       setLoading(false);
 
       toast.error("Phone Number be 11 digits");
-    } else if (firstThree !== "080") {
+    } else if (!lat || !lng) {
       setLoading(false);
       toast.error(
-        "Phone Number Must Start with any of this Format (080-090-070-081-091)"
+        "Please Refresh Your Browser and Allow Us to Access Your Location"
       );
     }
+    // else if (firstThree !== "080") {
+    //   setLoading(false);
+    //   toast.error(
+    //     "Phone Number Must Start with any of this Format (080-090-070-081-091)"
+    //   );
+    // }
     // else if (firstThree !== "080") {
     //   setLoading(false);
     //   toast.error(
@@ -149,7 +190,7 @@ const FieldAgentForm = () => {
           {/* Left Panel */}
           <div
             className="relative"
-            style={{ width: "450px", marginRight: "50px" }}
+            // style={{ width: "450px", marginRight: "50px" }}
           >
             {/* PersonalInformation */}
             <div>
@@ -202,26 +243,26 @@ const FieldAgentForm = () => {
             <div>
               <SubHeader title={"Address"} />
               <div>
-                <div className={flexClass}>
+                <div>
                   {/* State Dropdown */}
                   <div
-                    // className="form-group border border-black rounded-sm py-1 px-2"
-                    style={{ width: "45%" }}
+                  // className="form-group border border-black rounded-sm py-1 px-2"
+                  // style={{ width: "45%" }}
                   >
-                    {/* <label className="control-label">State</label> */}
                     <select
-                      onChange={onChange}
+                      onChange={onStateChange}
                       name="state"
                       id="state"
                       className="form-group border border-black rounded-sm py-1 px-4 w-full"
                     >
                       <option value="">- Select State -</option>
-                      <option value="Abia">Abia</option>
-                      <option value="Adamawa">Adamawa</option>
-                      <option value="AkwaIbom">AkwaIbom</option>
-                      <option value="Anambra">Anambra</option>
+                      {/* <option value="Abia">Abia</option> */}
+                      <option value="Adamawa">Adamawa</option>{" "}
+                      {/* <label className="control-label">State</label> */}
+                      {/* <option value="AkwaIbom">AkwaIbom</option>
+                      <option value="Anambra">Anambra</option> */}
                       <option value="Bauchi">Bauchi</option>
-                      <option value="Bayelsa">Bayelsa</option>
+                      {/* <option value="Bayelsa">Bayelsa</option>
                       <option value="Benue">Benue</option>
                       <option value="Borno">Borno</option>
                       <option value="Cross River">Cross River</option>
@@ -229,9 +270,9 @@ const FieldAgentForm = () => {
                       <option value="Ebonyi">Ebonyi</option>
                       <option value="Edo">Edo</option>
                       <option value="Ekiti">Ekiti</option>
-                      <option value="Enugu">Enugu</option>
-                      <option value="FCT">FCT</option>
-                      <option value="Gombe">Gombe</option>
+                      <option value="Enugu">Enugu</option> */}
+                      <option value="Abuja-Fct">ABUJA-FCT</option>
+                      {/* <option value="Gombe">Gombe</option>
                       <option value="Imo">Imo</option>
                       <option value="Jigawa">Jigawa</option>
                       <option value="Kaduna">Kaduna</option>
@@ -250,27 +291,44 @@ const FieldAgentForm = () => {
                       <option value="Plateau">Plateau</option>
                       <option value="Rivers">Rivers</option>
                       <option value="Sokoto">Sokoto</option>
-                      <option value="Taraba">Taraba</option>
-                      <option value="Yobe">Yobe</option>
-                      <option value="Zamfara">Zamafara</option>
+                      <option value="Taraba">Taraba</option> */}
+                      {/* <option value="Yobe">Yobe</option>
+                      <option value="Zamfara">Zamafara</option> */}
                     </select>
                   </div>
-                  <InputField
-                    title={"Town"}
-                    nameId={"town"}
-                    value={town}
-                    onChange={onChange}
-                    required={true}
-                  />
+                  {/* Local Government Input */}
+                  {showLgaInput && (
+                    <select
+                      onChange={onLgaChange}
+                      name="town"
+                      id="town"
+                      className="form-group border border-black rounded-sm py-1 px-4 w-full my-6"
+                    >
+                      <option value="">- Select Local Government -</option>
+                      {filteredLga.map((item, index) => (
+                        <option value={item.lga} key={index}>
+                          {item.lga}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                  {/* Wards Input */}
+                  {showWardsInput && (
+                    <select
+                      // onChange={onLgaChange}
+                      name="ward"
+                      id="ward"
+                      className="form-group border border-black rounded-sm py-1 px-4 w-full "
+                    >
+                      <option value="">- Select Ward -</option>
+                      {filteredWards.wards.map((item, index) => (
+                        <option value={item} key={index}>
+                          {item}
+                        </option>
+                      ))}
+                    </select>
+                  )}
                 </div>
-
-                <InputField
-                  title={"Residence Address"}
-                  nameId={"address"}
-                  value={address}
-                  onChange={onChange}
-                  required={true}
-                />
               </div>
             </div>
             {/* Conact Information */}
