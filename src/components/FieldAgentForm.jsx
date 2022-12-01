@@ -258,7 +258,7 @@ const FieldAgentForm = () => {
                     }}
                     dateFormat={"yyyy/MM/dd"}
                     maxDate={new Date("2004/01/01")}
-                    placeholderText="DOB (Atlest 18 Years)"
+                    placeholderText="DOB  - At least 18yrs old"
                     className="border border-black py-1 px-2 rounded-sm"
                   />
                 </div>
@@ -427,8 +427,8 @@ const FieldAgentForm = () => {
               </div>
               <div>
                 <p className="text-black my-2">
-                  What are ideas on the use of agro allied chemicals on plant,
-                  animals and environement?
+                  What are your ideas on the use of agro allied chemicals on
+                  plant, animals and environments?
                 </p>
                 <textarea
                   placeholder="40 Character Max"
