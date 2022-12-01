@@ -198,7 +198,7 @@ const FieldAgentForm = () => {
   const flexClass = "flex justify-between pb-5";
   if (loading) return <Spinner />;
   return (
-    <div className="lg:w-[450px] md:mx-auto mx-10 mb-32 mt-14">
+    <div className="lg:w-[450px] w-full md:mx-auto px-10 mb-32 mt-14">
       <div className="">
         <h1 className="text-xl md:text-3xl font-bold text-black">
           SCL Project Juriya
