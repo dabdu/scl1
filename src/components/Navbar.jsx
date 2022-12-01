@@ -15,12 +15,14 @@ const Navbar = () => {
   return (
     <div className="w-screen h-[80px] z-10 bg-white drop-shadow-lg px-6 md:px-20">
       <div className=" flex justify-between items-center w-full h-full">
-        <img
-          src="https://firstmultiplemfbank.com/sclnew/wp-content/uploads/2022/09/cropped-logo-scl-food-system.png"
-          style={{
-            height: "60px",
-          }}
-        />
+        <Link to={"/"}>
+          <img
+            src="https://firstmultiplemfbank.com/sclnew/wp-content/uploads/2022/09/cropped-logo-scl-food-system.png"
+            style={{
+              height: "60px",
+            }}
+          />
+        </Link>
         <div className="hidden md:flex pr-4">
           <ul className="hidden md:flex">
             {menu_items.map((menu, index) => (
@@ -44,7 +46,7 @@ const Navbar = () => {
 
       <ul
         className={!nav ? "hidden" : "absolute bg-white w-full px-6 "}
-        style={{ zIndex: 1000 }}
+        style={{ zIndex: 10000 }}
       >
         {menu_items.map((menu, index) => (
           <li key={index} className="border-b border-zinc-300 w-full font-bold">

@@ -15,7 +15,7 @@ const FieldAgentForm = () => {
     firstName: "",
     lastName: "",
     middleName: "",
-    nPowerNumber: "",
+    dob: null,
     email: "",
     phoneNumber: "",
     yearsOfExprience: "",
@@ -25,9 +25,10 @@ const FieldAgentForm = () => {
     state: "",
     town: "",
     ward: "",
-    // dob: new Date()
+    climateChangeIdea: "",
+    agroIdea: "",
   });
-  const [dob, setDob] = useState(null);
+  // const [dob, setDob] = useState(null);
   const [showLgaInput, setShowLgaInput] = useState(false);
   const [filteredLga, setFilteredLga] = useState([]);
   const [showWardsInput, setShowWardsInput] = useState(false);
@@ -51,6 +52,7 @@ const FieldAgentForm = () => {
     firstName,
     lastName,
     middleName,
+    dob,
     email,
     phoneNumber,
     yearsOfExprience,
@@ -59,6 +61,9 @@ const FieldAgentForm = () => {
     address,
     state,
     town,
+    ward,
+    climateChangeIdea,
+    agroIdea,
   } = formData;
   const onChange = (e) => {
     setFormData((prevState) => ({
@@ -71,6 +76,7 @@ const FieldAgentForm = () => {
       ...prevState,
       [e.target.name]: e.target.value,
     }));
+    // item.state.toUpperCase() === state &&
     let filtered = wardsList.filter(
       (item) => item.state === e.target.value.toUpperCase()
     );
@@ -83,7 +89,8 @@ const FieldAgentForm = () => {
       ...prevState,
       [e.target.name]: e.target.value,
     }));
-    var selected = wardsList.find(function (item) {
+
+    const selected = wardsList.find(function (item) {
       return item.lga === e.target.value.toUpperCase();
     });
     setFilteredWards(selected);
@@ -108,6 +115,9 @@ const FieldAgentForm = () => {
     const regEx =
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const firstThree = phoneNumber.slice(0, 3);
+    const phoneNumberFormat = ["080", "081", "070", "090", "091"];
+    const validNumber = phoneNumberFormat.find((item) => item === firstThree);
+    console.log(formData);
     if (
       !firstName ||
       !lastName ||
@@ -117,7 +127,8 @@ const FieldAgentForm = () => {
       !address ||
       !state ||
       !town ||
-      !dob
+      !dob ||
+      !ward
     ) {
       setLoading(false);
       toast.error("All Field Must be Fill");
@@ -128,65 +139,74 @@ const FieldAgentForm = () => {
     } else if (phoneNumber.length !== 11) {
       // Phone Number Validation
       setLoading(false);
-
       toast.error("Phone Number be 11 digits");
-    } else if (!lat || !lng) {
+    } else if (!validNumber) {
+      setLoading(false);
+      toast.error(
+        "Phone Number Must Start with any of this Format (080-090-070-081-091)"
+      );
+    } else if (!lat && !lng) {
       setLoading(false);
       toast.error(
         "Please Refresh Your Browser and Allow Us to Access Your Location"
       );
-    }
-    // else if (firstThree !== "080") {
-    //   setLoading(false);
-    //   toast.error(
-    //     "Phone Number Must Start with any of this Format (080-090-070-081-091)"
-    //   );
-    // }
-    // else if (firstThree !== "080") {
-    //   setLoading(false);
-    //   toast.error(
-    //     "Phone Number Must Start with any of this Format (080-090-070-081-091)"
-    //   );
-    // }
-    else {
-      axios({
-        method: "post",
-        url: "http://api.sclng.com/api/add-field-agent",
-        data: formData,
-        headers: { "Content-Type": "multipart/form-data" },
-      })
-        .then((res) => {
-          setLoading(false);
-          setFormData((prevState) => ({
-            ...prevState,
-            firstName: "",
-            lastName: "",
-            middleName: "",
-            nPowerNumber: "",
-            email: "",
-            phoneNumber: "",
-            yearsOfExprience: "",
-            address: "",
-            state: "",
-            town: "",
-            dob: new Date(),
-          }));
-          navigate(`/`);
-          toast.success("Form Data Saved Successfully!!!");
-        })
-        .catch((error) => {
-          setLoading(false);
-          toast.error("Error Occured, Please Try Again");
-          console.log(error);
-        });
+    } else if (climateChangeIdea.length > 40) {
+      setLoading(false);
+      toast.error(
+        "ideas about the impact of climate change should not be more than 40 Characters"
+      );
+    } else if (agroIdea.length > 40) {
+      setLoading(false);
+      toast.error(
+        "Ideas on the use of agro allied chemicals on plant, animals and environement"
+      );
+    } else {
+      console.log(formData);
+      setLoading(false);
+      // axios({
+      //   method: "post",
+      //   url: "http://api.sclng.com/api/add-field-agent",
+      //   data: formData,
+      //   headers: { "Content-Type": "multipart/form-data" },
+      // })
+      //   .then((res) => {
+      //     setLoading(false);
+      //     setFormData((prevState) => ({
+      //       ...prevState,
+      //       firstName: "",
+      //       lastName: "",
+      //       middleName: "",
+      //       nPowerNumber: "",
+      //       email: "",
+      //       phoneNumber: "",
+      //       yearsOfExprience: "",
+      //       address: "",
+      //       state: "",
+      //       town: "",
+      //       dob: new Date(),
+      //     }));
+      //     navigate(`/`);
+      //     toast.success("Form Data Saved Successfully!!!");
+      //   })
+      //   .catch((error) => {
+      //     setLoading(false);
+      //     toast.error("Error Occured, Please Try Again");
+      //     console.log(error);
+      //   });
     }
   };
   const flexClass = "flex justify-between pb-5";
   if (loading) return <Spinner />;
   return (
-    <div className=" mb-24">
+    <div className="lg:w-[450px] md:mx-auto mx-10 mb-32 mt-14">
       <div className="">
-        <form className="flex items-center px-56 my-12">
+        <h1 className="text-xl md:text-3xl font-bold text-black">
+          SCL Project Juriya
+        </h1>
+        <p className="text-green-400 font-medium text-lg">
+          Field Agent Registration Required Information
+        </p>
+        <form className="flex items-center">
           {/* Left Panel */}
           <div
             className="relative"
@@ -230,7 +250,12 @@ const FieldAgentForm = () => {
                   /> */}
                   <DatePicker
                     selected={dob}
-                    onChange={(date) => setDob(date)}
+                    onChange={(date) => {
+                      setFormData((prevState) => ({
+                        ...prevState,
+                        dob: date,
+                      }));
+                    }}
                     dateFormat={"yyyy/MM/dd"}
                     maxDate={new Date("2004/01/01")}
                     placeholderText="DOB (Atlest 18 Years)"
@@ -243,6 +268,14 @@ const FieldAgentForm = () => {
             <div>
               <SubHeader title={"Address"} />
               <div>
+                <InputField
+                  title={"Residential Address"}
+                  nameId={"address"}
+                  value={address}
+                  onChange={onChange}
+                  required={true}
+                />
+                <br />
                 <div>
                   {/* State Dropdown */}
                   <div
@@ -257,11 +290,11 @@ const FieldAgentForm = () => {
                     >
                       <option value="">- Select State -</option>
                       {/* <option value="Abia">Abia</option> */}
-                      <option value="Adamawa">Adamawa</option>{" "}
+                      <option value="ADAMAWA">Adamawa</option>
                       {/* <label className="control-label">State</label> */}
                       {/* <option value="AkwaIbom">AkwaIbom</option>
                       <option value="Anambra">Anambra</option> */}
-                      <option value="Bauchi">Bauchi</option>
+                      <option value="BAUCHI">Bauchi</option>
                       {/* <option value="Bayelsa">Bayelsa</option>
                       <option value="Benue">Benue</option>
                       <option value="Borno">Borno</option>
@@ -271,27 +304,27 @@ const FieldAgentForm = () => {
                       <option value="Edo">Edo</option>
                       <option value="Ekiti">Ekiti</option>
                       <option value="Enugu">Enugu</option> */}
-                      <option value="Abuja-Fct">ABUJA-FCT</option>
+                      <option value="ABUJA-FCT">ABUJA-FCT</option>
                       {/* <option value="Gombe">Gombe</option>
                       <option value="Imo">Imo</option>
-                      <option value="Jigawa">Jigawa</option>
-                      <option value="Kaduna">Kaduna</option>
-                      <option value="Kano">Kano</option>
-                      <option value="Katsina">Katsina</option>
+                      <option value="Jigawa">Jigawa</option> */}
+                      <option value="KADUNA">Kaduna</option>
+                      <option value="KANO">Kano</option>
+                      {/* <option value="Katsina">Katsina</option>
                       <option value="Kebbi">Kebbi</option>
                       <option value="Kogi">Kogi</option>
                       <option value="Kwara">Kwara</option>
-                      <option value="Lagos">Lagos</option>
-                      <option value="Nasarawa">Nasarawa</option>
-                      <option value="Niger">Niger</option>
+                      <option value="Lagos">Lagos</option> */}
+                      <option value="NASARAWA">Nasarawa</option>
+                      {/* <option value="Niger">Niger</option>
                       <option value="Ogun">Ogun</option>
                       <option value="Ondo">Ondo</option>
                       <option value="Osun">Osun</option>
                       <option value="Oyo">Oyo</option>
                       <option value="Plateau">Plateau</option>
                       <option value="Rivers">Rivers</option>
-                      <option value="Sokoto">Sokoto</option>
-                      <option value="Taraba">Taraba</option> */}
+                      <option value="Sokoto">Sokoto</option>*/}
+                      <option value="TARABA">Taraba</option>
                       {/* <option value="Yobe">Yobe</option>
                       <option value="Zamfara">Zamafara</option> */}
                     </select>
@@ -315,7 +348,7 @@ const FieldAgentForm = () => {
                   {/* Wards Input */}
                   {showWardsInput && (
                     <select
-                      // onChange={onLgaChange}
+                      onChange={onChange}
                       name="ward"
                       id="ward"
                       className="form-group border border-black rounded-sm py-1 px-4 w-full "
@@ -387,6 +420,9 @@ const FieldAgentForm = () => {
                   placeholder="40 Character Max"
                   rows={2}
                   className="w-full border border-black rounded-sm p-2"
+                  name="climateChangeIdea"
+                  id="climateChangeIdea"
+                  onChange={onChange}
                 ></textarea>
               </div>
               <div>
@@ -398,6 +434,9 @@ const FieldAgentForm = () => {
                   placeholder="40 Character Max"
                   rows={2}
                   className="w-full border border-black rounded-sm p-2"
+                  name="agroIdea"
+                  id="agroIdea"
+                  onChange={onChange}
                 ></textarea>
               </div>
             </div>

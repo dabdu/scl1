@@ -11,6 +11,7 @@ import Support from "../components/Support";
 import ValuesSection from "../components/ValuesSection";
 import VideoSection from "../components/VideoSection";
 import FieldAgentForm from "../components/FieldAgentForm";
+import { RegButton } from "../components/RegButton";
 
 const Home = () => {
   const [loading, setLoading] = useState(false);
@@ -30,6 +31,7 @@ const Home = () => {
           {/* <Header /> */}
           <Navbar />
           <Hero />
+          <RegButton />
           <About />
           <IconsSection />
           <ValuesSection />
